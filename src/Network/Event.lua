@@ -1,3 +1,4 @@
+--!strict
 --[[
 
     Wrapper for RemoteEvents.
@@ -123,14 +124,8 @@ return function ()
     return function (Name: string?)
         if (type(Name) ~= "string") then
             ThrowError("Expected a string, got a " .. type(Name) .. " instead.")
+            return
         end
         return Event.new(Name, true)
-    end, function(Remote: RemoteEvent?)
-        if (not ((typeof(Remote) == "Instance") and (Remote.ClassName == "RemoteEvent"))) then
-            ThrowError("Expected a RemoteEvent, got a " .. typeof(Remote) .. " instead.")
-        end
-        local New = Event.new(Remote.Name, false)
-        NetworkCore:BuildFromRemote(Remote, New)
-        return New
     end
 end

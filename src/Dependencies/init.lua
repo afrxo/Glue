@@ -1,3 +1,4 @@
+--!strict
 --[[
 
     Compact class that handles dependency injection.
@@ -29,9 +30,10 @@ DependencyManager.Hooks = {}
     Captures a set of dependencies tagged with a given tag.
 
 ]]
-function DependencyManager:Capture(tag: string, filter)
+function DependencyManager:Capture(tag: string, filter: ((Dependency: typeof(DependencyBaseClass(""))) -> boolean)?)
     local CapturedDependencies = {}
-    table.foreach(self.DependencyList, function(Dependency)
+
+    for Dependency in self.DependencyList do
         if (Dependency:getTag() == tag) then
             if (not filter) then
                 table.insert(CapturedDependencies, Dependency)
@@ -41,7 +43,8 @@ function DependencyManager:Capture(tag: string, filter)
                 end
             end
         end
-    end)
+    end
+
     return CapturedDependencies
 end
 
@@ -54,7 +57,7 @@ end
 function DependencyManager:Use(Dependency)
     if (not self.DependencyList[Dependency]) then
         self.DependencyList[Dependency] = true
-        self.DependencyCount = self.DependencyCount + 1
+        self.DependencyCount = (self.DependencyCount :: number) + 1
     end
 end
 
@@ -67,7 +70,7 @@ end
 function DependencyManager:Remove(Dependency)
     if (self.DependencyList[Dependency]) then
         self.DependencyList[Dependency] = nil
-        self.DependencyCount = self.DependencyCount - 1
+        self.DependencyCount = (self.DependencyCount :: number) - 1
     end
 end
 

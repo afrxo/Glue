@@ -24,7 +24,7 @@ local Glue = require(game:GetService('ReplicatedStorage').Packages.Glue)
 ## Provider
 
 ```lua
-local Provider = Glue.Provider({ Name = "Provider" })
+local Provider = Glue.Provider("Provider")
 
 function Provider:onCreate()
 
@@ -41,25 +41,11 @@ return Provider
 "Provider":{
     "prefix": "provider",
     "body": [
-        "local ${0:$TM_FILENAME_BASE} = Glue.Provider({ Name = '${0:$TM_FILENAME_BASE}' })\n\n",
+        "local ${0:$TM_FILENAME_BASE} = Glue.Provider('${0:$TM_FILENAME_BASE}')\n\n",
         "function ${0:$TM_FILENAME_BASE}:onCreate()\n\t\nend\n\n",
         "function ${0:$TM_FILENAME_BASE}:onStart()\n\t\nend\n\n",
         "return ${0:$TM_FILENAME_BASE}"
     ],
     "description": "Create a Provider."
-}
-```
-
-## Get Provider
-
-```lua
-local Provider = Glue.GetProvider('Provider')
-```
-
-```json
-"Glue GetProvider": {
-    "prefix": ["gluegetprovider"],
-    "body": ["local ${1:Name} = Glue.GetProvider('${1:Name}')"],
-    "description": "Fetch a Provider."
 }
 ```

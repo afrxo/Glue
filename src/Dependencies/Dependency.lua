@@ -1,3 +1,4 @@
+--!strict
 --[[
 
     Base-class for all dependencies.

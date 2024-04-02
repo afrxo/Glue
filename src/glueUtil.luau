@@ -1,26 +1,11 @@
--- glueUtil.lua
+--!strict
+-- glueUtil.luau
 -- Utility functions for the glue library.
 local HttpService = game:GetService("HttpService")
 
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
-
-
--- Get an Instance by its FullName
--- @param FullName The full name of the Instance
-function getInstance(FullName: string): Instance?
-	local Layers = FullName:split(".")
-	local CurrentLayer = game
-
-	for _, Layer in ipairs(Layers) do
-		CurrentLayer = CurrentLayer:FindFirstChild(Layer)
-		if (CurrentLayer == nil) then return end
-	end
-
-	return CurrentLayer
-end
-
 
 -- Gets the clients platform
 function getPlatform()
@@ -88,8 +73,7 @@ return {
 	with = with,
 	readOnly = readOnly,
 	getPlatform = getPlatform,
-	getInstance = getInstance,
 	generateGuid = generateGuid,
 	getEnvironment = getEnvironment,
-	getLocalPlayer = getLocalPlayer,
+	getLocalPlayer = getLocalPlayer
 }

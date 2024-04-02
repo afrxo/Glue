@@ -1,3 +1,4 @@
+--!strict
 --[[
 
     Wrapper for RemoteFunctions.
@@ -64,17 +65,11 @@ function Function.new(Name: string, asDependency: boolean?)
 end
 
 return function ()
-    return function (Name: string?)
+    return function (Name)
         if (type(Name) ~= "string") then
             ThrowError("Expected a string, got a " .. type(Name) .. " instead.", 2)
+            return
         end
         return Function.new(Name, true)
-    end, function(Remote: RemoteFunction?)
-        if (not ((typeof(Remote) == "Instance") and (Remote.ClassName == "RemoteFunction"))) then
-            ThrowError("Expected a RemoteFunction, got a " .. typeof(Remote) .. " instead.")
-        end
-        local New = Function.new(Remote.Name, false)
-        NetworkCore:BuildFromRemote(Remote, New)
-        return New
     end
 end

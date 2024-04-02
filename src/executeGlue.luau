@@ -1,4 +1,5 @@
--- executeGlue.lua
+--!strict
+-- executeGlue.luau
 -- Executes the glue library.
 
 local Error = require(script.Parent.Error)
@@ -11,7 +12,6 @@ local Dependencies = require(script.Parent.Dependencies)
 local RunService = game:GetService("RunService")
 local isServer = RunService:IsServer()
 local isClient = RunService:IsClient()
-
 
 local function createInternalBinding(bindedMethod: string)
 	return function (...)
@@ -81,7 +81,7 @@ local function attachProviderBindings()
 			end
 		end
 
-        
+
         --> Attach bindings
         for _, Binding in ipairs(Bindings) do
             local Provider = Binding.Provider

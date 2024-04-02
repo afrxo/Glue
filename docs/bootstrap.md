@@ -70,12 +70,6 @@ Glue.Stick():andThen(function()
     print("Client Bootstrap complete.")
 end)
 ```
-## Modules
-
-- Shared modules are to be kept within `ReplicatedStorage/Shared`.
-- Server modules are to be kept within `ServerScriptService/Modules`.
-- Client modules are to be kept within `StarterPlayer/Modules`.
-
 ## Providers
 
 - Providers are to be kept within the environments according bootstrap script.

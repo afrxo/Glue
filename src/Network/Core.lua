@@ -1,3 +1,4 @@
+--!strict
 --[[
 
     The internal class that handles Networking.
@@ -32,12 +33,16 @@ Dependency:useDependency("NetworkFunction")
 
 local Network = setmetatable({}, {__metatable = "Network", __index = Dependency})
 
+local RemoteFolder: Folder;
 if (isServer) then
-    local RemoteFolder = Instance.new("Folder", script.Parent.Parent)
-    RemoteFolder.Name = RemoteFolderName
-    Network.RemoteFolder = RemoteFolder
+    if script.Parent.Parent:FindFirstChild(RemoteFolderName) then
+        RemoteFolder = script.Parent.Parent:FindFirstChild(RemoteFolderName)
+    else
+        RemoteFolder = Instance.new("Folder", script.Parent.Parent)
+        RemoteFolder.Name = RemoteFolderName
+    end
 elseif (isClient) then
-    Network.RemoteFolder = script.Parent.Parent:WaitForChild(RemoteFolderName)
+    RemoteFolder = script.Parent.Parent:WaitForChild(RemoteFolderName)
 end
 
 function Network:MakeMiddlewareFactory(Signal)
@@ -88,7 +93,7 @@ end
 
 ]]
 function Network:BuildRemoteFromName(Name: string, Type: string)
-    local HashedName = HashStringToInt(Name)
+    local HashedName = tostring(HashStringToInt(Name))
     local RemoteType = "";
     if (Type == "NetworkFunction") then
         RemoteType = "RemoteFunction"
@@ -98,15 +103,16 @@ function Network:BuildRemoteFromName(Name: string, Type: string)
         error("Unknown type: " .. Type)
     end
     if (isServer) then
-        if (self.RemoteFolder:FindFirstChild(HashedName)) then
+        local _instance = RemoteFolder:FindFirstChild(HashedName)
+        if (_instance) and _instance.ClassName == Type then
             error("Remote " .. Type .. " with name " .. Name .. " already exists.")
         end
-        local NewRemoteEndpoint = Instance.new(RemoteType, self.RemoteFolder)
-        NewRemoteEndpoint.Name = tostring(HashedName)
+        local NewRemoteEndpoint = Instance.new(RemoteType, RemoteFolder)
+        NewRemoteEndpoint.Name = HashedName
         return NewRemoteEndpoint
-    elseif (isClient) then
-        return self.RemoteFolder:WaitForChild(HashedName)
     end
+
+    return RemoteFolder:WaitForChild(HashedName)
 end
 
 
@@ -124,7 +130,7 @@ end
     Initializes a NetworkEvent.
 
 ]]
-function Network:BuildNetworkEvent(Event)
+function Network:BuildNetworkEvent(Event: any)
     Event._remote = self:BuildRemoteFromName(Event.Name, getmetatable(Event) :: string)
     Event._callbacks = {}
     Event._connections = {}
@@ -142,7 +148,7 @@ end
     Initializes a NetworkFunction.
 
 ]]
-function Network:BuildNetworkFunction(Function)
+function Network:BuildNetworkFunction(Function: any)
     Function._remote = self:BuildRemoteFromName(Function.Name, getmetatable(Function) :: string)
     Function._callbacks = {}
 
@@ -150,37 +156,6 @@ function Network:BuildNetworkFunction(Function)
         Function._remote.OnServerInvoke = self:MakeMiddlewareFactory(Function)
     elseif (isClient) then
         Function._remote.OnClientInvoke = self:MakeMiddlewareFactory(Function)
-    end
-end
-
---[[
-
-    Initializes a NetworkSignal from a RemoteEvent/RemoteFunction.
-
-]]
-function Network:BuildFromRemote(Remote: RemoteEvent | RemoteFunction, NetworkSignal)
-    if (getmetatable(NetworkSignal) == "NetworkEvent") and (Remote:IsA("RemoteEvent")) then
-        local Event = NetworkSignal
-        Event._remote = Remote
-        Event._callbacks = {}
-
-        if (isServer) then
-            Event._remote.OnServerEvent:Connect(self:MakeMiddlewareFactory(Event))
-        elseif (isClient) then
-            Event._remote.OnClientEvent:Connect(self:MakeMiddlewareFactory(Event))
-        end
-    elseif (getmetatable(NetworkSignal) == "NetworkFunction") and (Remote:IsA("RemoteFunction")) then
-        local Function = NetworkSignal
-        Function._remote = Remote
-        Function._callbacks = {}
-
-        if (isServer) then
-            Function._remote.OnServerInvoke = self:MakeMiddlewareFactory(Function)
-        elseif (isClient) then
-            Function._remote.OnClientInvoke = self:MakeMiddlewareFactory(Function)
-        end
-    else
-        error("Invalid network signal type.")
     end
 end
 

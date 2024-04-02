@@ -1,4 +1,4 @@
--- symbols.lua
+-- symbols.luau
 -- Strongly referenced internalaly used symbols
 
 local createSymbol = require(script.Parent.createSymbol)

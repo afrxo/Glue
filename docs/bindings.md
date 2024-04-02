@@ -9,7 +9,7 @@ Bindings allow providers to have interal methods executed externally, past the S
 Here we have two providers, one consumer providers that reacts to the vendor provider, and the vendor provider that emits a reaction to the consumer provider.
 
 ```lua
-local Consumer = Glue.Provider({ Name = "Consumer1" })
+local Consumer = Glue.Provider("Consumer1")
 
 function Consumer:valueChanged(value: string)
     print("New value ->", value)
@@ -17,7 +17,7 @@ end
 ```
 
 ```lua
-local Vendor = Glue.Provider({ Name = "Vendor" })
+local Vendor = Glue.Provider("Vendor")
 
 function Vendor:onCreate()
     self.value = "Foo"
@@ -32,7 +32,7 @@ function Vendor:changeValue(value: string)
 end
 ```
 
-So how do we get the two consumers to react to the vendor provider? Enter Bindings. Bindings are a way to bind a provider to a consumer. Well, how do we bind a provider to a consumer? 
+So how do we get the two consumers to react to the vendor provider? Enter Bindings. Bindings are a way to bind a provider to a consumer. Well, how do we bind a provider to a consumer?
 
 To create a binding, you use the createBinding function, that gets passed into `Provider.onConfig`. The key of the binding specifies the name of the binding. `createBinding` returns a symbol, that gets resolved after `Provider.onCreate`.
 
@@ -51,7 +51,7 @@ function Vendor:changeValue(value: string)
 end
 ```
 
-If we run this nothing will happen, since we haven't binded the consumer to the vendor provider directly. This step is vital in security so the developer can directly control method invokation. Here's how that looks like:
+If we run this nothing will happen, since we haven't bound the consumer to the vendor provider directly. This step is vital in security so the developer can directly control method invocation. Here's how that looks like:
 
 ```lua
 function Consumer:onConfig(bindTo, createBinding)
@@ -65,7 +65,7 @@ The string passed to `bindTo` must be the name of the provider you are binding t
 
 `Vendor.lua`
 ```lua
-local Vendor = Glue.Provider({ Name = "Vendor" })
+local Vendor = Glue.Provider("Vendor")
 
 function Vendor:onConfig(bindTo, createBinding)
 	self.valueChanged = createBinding()
@@ -86,7 +86,7 @@ end
 ```
 `Consumer.lua`
 ```lua
-local Consumer = Glue.Provider({ Name = "Consumer" })
+local Consumer = Glue.Provider({"Consumer")
 
 function Consumer:onConfig(bindTo, createBinding)
 	bindTo("Vendor")

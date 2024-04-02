@@ -1,4 +1,5 @@
--- createSymbol.lua
+--!strict
+-- createSymbol.luau
 -- Create markers representing anything.
 
 -- Create a symbol with the specified name.

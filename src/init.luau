@@ -14,14 +14,13 @@ local PubTypes = require(script:WaitForChild("types"))
 
 export type Glue = PubTypes.Glue
 
-export type Math = PubTypes.Math
 export type Network = PubTypes.Network
 export type Middleware = PubTypes.Middleware
 export type NetworkEvent = PubTypes.NetworkEvent
 export type EventConnection = PubTypes.EventConnection
 export type NetworkFunction = PubTypes.NetworkFunction
 
-export type Provider = PubTypes.Provider
+export type Provider<Interface> = PubTypes.Provider<Interface>
 export type Map<T> = PubTypes.Map<T>
 export type Array<T> = PubTypes.Array<T>
 
@@ -31,10 +30,7 @@ local glueUtil = require(script:WaitForChild("glueUtil"))
 local Packages = script.Parent
 local Promise = require(Packages:WaitForChild("Promise"))
 
-local Math = require(script:WaitForChild("Math"))
 local Network = require(script:WaitForChild("Network"))
-local createLoader = require(script:WaitForChild("loader"))
-local importPackage = require(script:WaitForChild("import"))
 local createProvider = require(script:WaitForChild("createProvider"))
 
 local glueManager = require(script:WaitForChild("glueManager"))
@@ -62,41 +58,6 @@ local function createGlueApi()
 
 	]=]
 	Glue.Version = Version.Value
-	--[=[
-		@function Import
-		@within Glue
-		@param Target string | ModuleScript
-
-		Imports a package found in the paths specified in `GlueConfig`.
-
-		```lua
-		local MakeHello = Glue.Import("MakeHello")
-		MakeHello()
-		```
-	]=]
-	Glue.Import = importPackage
-	--[=[
-		@function loader
-		@within Glue
-		@param Target Instance
-		@param Seperator string?
-
-		Creates a module loader for the specified target.
-
-		```lua
-		local require = require(game:GetService("ReplicatedStorage").Glue).loader(script)
-
-		local Util = require("Util")
-		```
-	]=]
-	Glue.loader = createLoader
-	--[=[
-		@prop Math Math
-		@within Glue
-
-		The Glue Math library.
-	]=]
-	Glue.Math = Math
 	--[=[
 
 		@prop Network Network
@@ -157,45 +118,6 @@ local function createGlueApi()
 
 	]=]
 	Glue.LocalPlayer = glueUtil.getLocalPlayer()
-	--[=[
-
-		@param Name string
-		@return Provider?
-
-		Fetches a Provider by name.
-
-		:::caution
-			Providers can only be fetched after all Providers have been initialized.
-		:::
-
-	]=]
-	function Glue.GetProvider(Name: string)
-		if not sharedState.GluePipelineInitialized then
-			Error.throw(Error.new("cannotGetProviderBeforeStart", Name))
-		end
-
-		return glueManager.GetProvider(Name)
-	end
-	--[=[
-
-		@function Imports
-		@param ImportPaths Array<Instance> | Instance
-		@within Glue
-
-		Sets the paths to search for packages.
-
-		```lua
-		Glue.Imports { ReplicatedStorage.Shared, ServerScriptService.Modules }
-		```
-
-	]=]
-	function Glue.Imports(ImportPaths)
-		if not ImportPaths then
-			Error.throw(Error.new("zeroArguments"))
-		end
-
-		glueManager.UseImportPaths(ImportPaths)
-	end
 	--[=[
 
 		@function Extensions
