@@ -39,7 +39,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Glue = require(ReplicatedStorage.Wally.Glue)
 
 -- Creating the Provider
-local ExampleProvider = Glue.Provider({ Name = "ExampleProvider" })
+local ExampleProvider = Glue.Provider("ExampleProvider")
 
 -- Attaching the onCreate lifeycle method
 function ExampleProvider:onCreate()
