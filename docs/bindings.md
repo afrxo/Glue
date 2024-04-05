@@ -86,7 +86,7 @@ end
 ```
 `Consumer.lua`
 ```lua
-local Consumer = Glue.Provider({"Consumer")
+local Consumer = Glue.Provider("Consumer")
 
 function Consumer:onConfig(bindTo, createBinding)
 	bindTo("Vendor")
